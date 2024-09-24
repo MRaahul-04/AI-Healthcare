@@ -1,10 +1,90 @@
+{#index.html#}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Signup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+<div class="container">
+    <!-- Circle Image Section -->
+    <div class="image-section">
+        <img src="{{ url_for('static', filename='images/18706987_TaeAugust07.jpg') }}" alt="Doctor Image">
+    </div>
 
+    <!-- Login Form Section -->
+    <div class="form-section">
+        <div class="form-container">
+            <h2 class="welcome-text">Welcome to <br> HealthyAI</h2>
+            <p class="title">Login</p>
+            <form class="form" method="POST">
+                <div class="input-group">
+                    <label for="patient_id">Patient ID</label>
+                    <input type="text" name="patient_id" id="patient_id" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
+                {% if error %}
+                <p class="error-message">{{ error }}</p>
+                {% endif %}
+                <button type="submit" class="sign">Sign in</button>
+
+            <div class="social-message">
+                <div class="line"></div>
+                <p class="message">Login with social accounts</p>
+                <div class="line"></div>
+            </div>
+
+            <div class="social-icons">
+                <a href="/login/google" class="icon">
+                    <img src="/static/images/icons8-google.svg" alt="Google Icon">
+                </a>
+                <a href="/login/github" class="icon">
+                    <img src="/static/images/icons8-github.svg" alt="GitHub Icon">
+                </a>
+            </div>
+            <p class="quote">{{ quote }}</p>  <!-- Display random quote -->
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Form Section -->
+    <div class="form-section">
+        <div class="form-container">
+            <p class="title">Sign Up</p>
+            <form class="form" method="POST" action="/signup">
+                <div class="input-group">
+                    <label for="full_name">Full Name</label>
+                    <input type="text" name="full_name" id="full_name" required>
+                </div>
+                <div class="input-group">
+                    <label for="gender">Gender</label>
+                    <input type="text" name="gender" id="gender" required>
+                </div>
+                <div class="input-group">
+                    <label for="age">Age</label>
+                    <input type="number" name="age" id="age" required>
+                </div>
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="mobile_no">Mobile No.</label>
+                    <input type="text" name="mobile_no" id="mobile_no" required>
+                </div>
+                {% if signup_error %}
+                <p class="error-message">{{ signup_error }}</p>
+                {% endif %}
+                <button type="submit" class="sign">Sign up</button>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -1,0 +1,259 @@
+/*style.css*/
+
+/* Resets */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #111827;  /* Dark background */
+  font-family: 'Poppins', sans-serif;
+  color: #F3F4F6;  /* Light text */
+  margin: 0;
+}
+
+/* Main container for the image, login, and signup sections */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  gap: 2rem;  /* Space between image, login, and signup forms */
+  background-color: #111827;  /* Dark background */
+}
+
+/* Circle Image Section */
+.image-section img {
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;  /* Makes the image circular */
+  object-fit: cover;  /* Ensures the image fits the circle without distortion */
+  border: 10px solid #3B82F6;  /* Add a cool border matching the interface */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);  /* Optional: Add some shadow for depth */
+}
+
+/* Form Section */
+.form-section {
+  flex: 1;  /* Allows login and signup forms to be responsive */
+}
+
+/* Form Container */
+.form-container {
+  width: 320px;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  background-color: #1F2937;  /* Slightly lighter background */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Welcome Text Styling with Gradient */
+.welcome-text {
+  position: relative;  /* Position relative for pseudo-elements */
+  text-align: center;
+  font-size: 1.5rem;  /* Increased size */
+  margin: 1rem 0;  /* Space above and below the welcome text */
+  background: linear-gradient(to right, #3B82F6, #60A5FA);  /* Gradient from dark blue to light blue */
+  -webkit-background-clip: text;  /* For Safari */
+  -webkit-text-fill-color: transparent;  /* Hide the original color */
+}
+
+/* Lines above and below the welcome text */
+.welcome-text::before{}
+.welcome-text::after {
+  content: "";  /* Empty content for the line */
+  display: block;  /* Make it block-level to stack */
+  width: 90%;  /* Width of the lines */
+  height: 4px;  /* Height of the lines */
+  background-color: #3B82F6;  /* Line color */
+  margin: 0 auto;  /* Center the lines */
+}
+
+.welcome-text::after {
+  margin-top: 0.5rem;  /* Space below the welcome text */
+}
+
+/* Error Message */
+.error-message {
+  color: #F87171; /* Red color for error */
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+/* Form Styling */
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group {
+  margin-bottom: 1.25rem;
+}
+
+.input-group label {
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+  display: block;
+  color: #D1D5DB;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #374151;
+  background-color: #111827;
+  color: #F3F4F6;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #3B82F6; /* Blue highlight on focus */
+}
+
+/* Forgot Password Link */
+.forgot {
+  text-align: right;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.forgot a {
+  color: #9CA3AF;
+  text-decoration: none;
+}
+
+.forgot a:hover {
+  text-decoration: underline;
+}
+
+/* Submit Button */
+.sign {
+  background-color: #3B82F6;  /* Primary Blue */
+  color: #FFFFFF;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.sign:hover {
+  background-color: #2563EB;  /* Darker blue on hover */
+}
+
+/* Social Login Section */
+.social-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  color: #D1D5DB;
+}
+
+.line {
+  height: 1px;
+  background-color: #374151;
+  flex-grow: 1;
+  margin: 0 0.75rem;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #374151;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  color: #F3F4F6; /* Ensure the icon color is visible */
+  transition: background-color 0.3s ease;
+}
+
+.icon:hover {
+  background-color: #4B5563;
+}
+
+.icon svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* Sign-up Prompt */
+.signup {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #9CA3AF;
+}
+
+.signup a {
+  color: #3B82F6;
+  text-decoration: none;
+}
+
+.signup a:hover {
+  text-decoration: underline;
+}
+
+/* Additional styles for the signup form */
+.signup-form-container {
+  width: 320px;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  background-color: #1F2937;  /* Slightly lighter background */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Quote styling */
+.quote {
+  text-align: center;
+  font-style: italic;
+  margin-top: 1rem;  /* Space between social buttons and quote */
+  color: #D1D5DB; /* Lighter color for the quote */
+  font-size: 0.875rem;  /* Font size adjustment to match UI */
+}
+
+/* Ensures both login and signup form have consistent styles */
+.signup-form .input-group,
+.signup-form .sign {
+  margin-bottom: 1.25rem;
+}
+
+/* Adjustments for responsive behavior */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;  /* Stack elements on smaller screens */
+  }
+
+  .image-section, .form-section {
+    width: 100%;  /* Make each section take full width on mobile */
+    text-align: center;
+  }
+
+  .form-container, .signup-form-container {
+    margin: 1rem 0;
+  }
+}
