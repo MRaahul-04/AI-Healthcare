@@ -24,38 +24,45 @@ body, html {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  gap: 2rem;  /* Space between image, login, and signup forms */
+  gap: 0.5rem;  /* Space between image, login, and signup forms */
   background-color: #111827;  /* Dark background */
+  flex-wrap: wrap;  /* Ensure wrapping on smaller screens */
+  padding: 2rem;  /* Added padding around the container */
 }
 
 /* Circle Image Section */
 .image-section img {
-  width: 400px;
-  height: 400px;
+  width: 350px;
+  height: 350px;
   border-radius: 50%;  /* Makes the image circular */
   object-fit: cover;  /* Ensures the image fits the circle without distortion */
   border: 10px solid #3B82F6;  /* Add a cool border matching the interface */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);  /* Optional: Add some shadow for depth */
 }
 
+/* For older browsers */
+@supports not (object-fit: cover) {
+  .image-section img {
+    width: 100%;
+    height: auto; /* Fallback for unsupported browsers */
+  }
+}
+
 /* Form Section */
 .form-section {
   flex: 1;  /* Allows login and signup forms to be responsive */
+  padding: 1rem;  /* Increased padding inside the form sections */
 }
 
 /* Form Container */
 .form-container {
-  width: 320px;
+  width: 340px;
+  height: 650px;
   padding: 2rem;
-  border-radius: 0.75rem;
+  border-radius: 2rem;
   background-color: #1F2937;  /* Slightly lighter background */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.title {
-  text-align: center;
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
+  -webkit-backface-visibility: hidden;  /* Fix flickering issue in some browsers */
 }
 
 /* Welcome Text Styling with Gradient */
@@ -67,54 +74,38 @@ body, html {
   background: linear-gradient(to right, #3B82F6, #60A5FA);  /* Gradient from dark blue to light blue */
   -webkit-background-clip: text;  /* For Safari */
   -webkit-text-fill-color: transparent;  /* Hide the original color */
+  background-clip: text;  /* Add this for Firefox */
 }
 
-/* Lines above and below the welcome text */
-.welcome-text::before{}
-.welcome-text::after {
-  content: "";  /* Empty content for the line */
-  display: block;  /* Make it block-level to stack */
-  width: 90%;  /* Width of the lines */
-  height: 4px;  /* Height of the lines */
-  background-color: #3B82F6;  /* Line color */
-  margin: 0 auto;  /* Center the lines */
+/* Fallback for browsers that don't support background-clip */
+@supports not (-webkit-background-clip: text) {
+  .welcome-text {
+    color: #3B82F6; /* Fallback solid color */
+  }
 }
 
-.welcome-text::after {
-  margin-top: 0.5rem;  /* Space below the welcome text */
-}
-
-/* Error Message */
-.error-message {
-  color: #F87171; /* Red color for error */
+.title {
   text-align: center;
-  margin-bottom: 1rem;
-  font-weight: bold;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: #D1D5DB
 }
 
-/* Form Styling */
-.form {
-  display: flex;
-  flex-direction: column;
-}
-
-.input-group {
-  margin-bottom: 1.25rem;
-}
-
+/* Input Groups */
 .input-group label {
   font-size: 0.875rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.75rem;
   display: block;
   color: #D1D5DB;
 }
 
 .input-group input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.5rem;
   border-radius: 0.5rem;
-  border: 1px solid #374151;
+  border: 2px solid #374151;
   background-color: #111827;
+  margin-bottom: 0.75rem;
   color: #F3F4F6;
 }
 
@@ -139,7 +130,8 @@ body, html {
   text-decoration: underline;
 }
 
-/* Submit Button */
+
+/* Sign In/Sign Up Button */
 .sign {
   background-color: #3B82F6;  /* Primary Blue */
   color: #FFFFFF;
@@ -148,7 +140,8 @@ body, html {
   border: none;
   font-weight: bold;
   cursor: pointer;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+  transition: background-color 0.3s ease;
 }
 
 .sign:hover {
@@ -160,7 +153,7 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.1rem;
   font-size: 0.875rem;
   color: #D1D5DB;
 }
@@ -172,77 +165,40 @@ body, html {
   margin: 0 0.75rem;
 }
 
+/* Social Icons */
 .social-icons {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.1rem;  /* Increased space below social login buttons */
 }
 
 .icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
+  width: 40px;  /* Increased icon size */
   height: 40px;
   border-radius: 50%;
   background-color: #374151;
-  margin: 0 0.5rem;
+  margin: 0 0.75rem;  /* Increased space between icons */
   cursor: pointer;
-  color: #F3F4F6; /* Ensure the icon color is visible */
-  transition: background-color 0.3s ease;
+  color: #F3F4F6;
 }
 
 .icon:hover {
   background-color: #4B5563;
 }
 
-.icon svg {
-  width: 20px;
-  height: 20px;
-  fill: currentColor;
-}
-
-/* Sign-up Prompt */
-.signup {
-  text-align: center;
-  font-size: 0.875rem;
-  color: #9CA3AF;
-}
-
-.signup a {
-  color: #3B82F6;
-  text-decoration: none;
-}
-
-.signup a:hover {
-  text-decoration: underline;
-}
-
-/* Additional styles for the signup form */
-.signup-form-container {
-  width: 320px;
-  padding: 2rem;
-  border-radius: 0.75rem;
-  background-color: #1F2937;  /* Slightly lighter background */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
 /* Quote styling */
 .quote {
   text-align: center;
   font-style: italic;
-  margin-top: 1rem;  /* Space between social buttons and quote */
-  color: #D1D5DB; /* Lighter color for the quote */
-  font-size: 0.875rem;  /* Font size adjustment to match UI */
+  margin-top: 1rem;  /* Increased space above the quote */
+  color: #D1D5DB;
+  font-size: 0.8rem;  /* Slightly larger font size */
 }
 
-/* Ensures both login and signup form have consistent styles */
-.signup-form .input-group,
-.signup-form .sign {
-  margin-bottom: 1.25rem;
-}
-
-/* Adjustments for responsive behavior */
+/* Responsive Design */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;  /* Stack elements on smaller screens */

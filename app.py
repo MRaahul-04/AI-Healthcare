@@ -1,9 +1,14 @@
 # app.py
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import random
+from datetime import datetime
+from mongodb import db, save_user_to_database, get_user_by_patient_id_and_password
 
 app = Flask(__name__)
+
+# Set a secret key to enable session functionality
+app.secret_key = 'test'  # Replace with a random, secure key
 
 # Mock user database (replace with actual database implementation)
 users = {}  # Dictionary to store user data
@@ -32,49 +37,114 @@ def index():
     return render_template("index.html", quote=quote)
 
 
-@app.route("/signup", methods=["POST"])
-def signup():
-    global patient_id_counter  # Access global counter
-    full_name = request.form.get("full_name")
-    gender = request.form.get("gender")
-    age = request.form.get("age")
-    email = request.form.get("email")
-    mobile_no = request.form.get("mobile_no")
+def create_patient_id():
+    # Access the users collection from MongoDB
+    users_collection = db['users']
 
-    # Create a new user with auto-generated Patient ID and set password as mobile number
-    if full_name and gender and age and email and mobile_no:
-        patient_id = str(patient_id_counter)
-        users[patient_id] = {
-            "full_name": full_name,
-            "gender": gender,
-            "age": age,
-            "email": email,
-            "mobile_no": mobile_no,
-            "password": mobile_no  # Set password as mobile number
-        }
-        patient_id_counter += 1  # Increment the Patient ID counter
-        return redirect(url_for("dashboard"))
+    # Find the maximum current patient_id and start from 100
+    last_user = users_collection.find_one({}, sort=[("patient_id", -1)])  # Get the last user sorted by patient_id
+
+    if last_user and 'patient_id' in last_user:
+        # Increment the last patient_id by 1
+        new_patient_id = int(last_user['patient_id']) + 1
     else:
-        return render_template("index.html", signup_error="Error in signup details", quote=random.choice(medical_quotes))
+        # If no users exist, start from 100
+        new_patient_id = 100
+
+    return str(new_patient_id)
 
 
-@app.get("/dashboard")
+@app.route('/signup', methods=['POST'])
+def signup():
+    full_name = request.form.get('full_name')
+    gender = request.form.get('gender')
+    age = request.form.get('age')
+    email = request.form.get('email')
+    mobile_number = request.form.get('mobile_number')
+
+    patient_id = create_patient_id()  # Generate a patient ID
+    password = mobile_number  # Set password to mobile number for now
+
+    # Save user to database
+    save_user_to_database(full_name, gender, age, email, mobile_number, password, patient_id)
+
+    # Return JSON response for modal popup
+    return jsonify({
+        'message': f'Patient ID: {patient_id} created. Please sign in to proceed.'
+    })
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    patient_id = request.form.get('patient_id')
+    password = request.form.get('password')
+
+    # Retrieve user from database
+    user = get_user_by_patient_id_and_password(patient_id, password)
+
+    if user:
+        return jsonify({'message': 'Login successful'})
+    else:
+        return jsonify({'message': 'Invalid credentials'}), 401
+
+
+@app.route('/book_appointment', methods=['POST'])
+def book_appointment():
+    user_id = session.get('user_id')
+    appointment_data = {
+        'user_id': user_id,
+        'date': request.form['date'],
+        'time': request.form['time'],
+        'doctor': request.form['doctor'],
+        'status': 'Pending'
+    }
+
+    # Insert into MongoDB
+    db.appointments.insert_one(appointment_data)
+
+    return redirect(url_for('appointments'))
+
+def log_chat(user_id, message, response):
+    log_data = {
+        'user_id': user_id,
+        'message': message,
+        'response': response,
+        'timestamp': datetime.now()
+    }
+
+    db.chat_logs.insert_one(log_data)
+
+
+@app.route("/dashboard")
 def dashboard():
-    return "<h1>Welcome to the Dashboard</h1>"
+    if 'user' in session:
+        user = session['user']
+        return render_template("dashboard.html", user=user)
+    else:
+        # If user isn't logged in, redirect to log in
+        return redirect(url_for('login'))  # Redirect to log in if no user is logged in
+
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        # Logic for sending password reset (via email or phone)
+        email_or_phone = request.form.get("email_or_phone")
+        return redirect(url_for("password_reset_confirmation"))
+    return render_template("forgot_password.html")
+
+@app.get("/password-reset-confirmation")
+def password_reset_confirmation():
+    return render_template("password_reset.html")
 
 
 # Placeholder routes for social login
-@app.route("/login/google")
+@app.get("/login/google")
 def login_google():
-    return "<h1>Login via Google</h1>"
+    return render_template("google.html")
 
-@app.route("/login/github")
+@app.get("/login/github")
 def login_github():
-    return "<h1>Login via GitHub</h1>"
-
-@app.route("/login/twitter")
-def login_twitter():
-    return "<h1>Login via X (Twitter)</h1>"
+    return render_template("github.html")
 
 
 if __name__ == "__main__":

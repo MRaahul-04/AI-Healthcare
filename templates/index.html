@@ -1,5 +1,27 @@
 {#index.html#}
 
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
+{#    <title>Login & Signup</title>#}
+{#    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">#}
+{#    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">#}
+{#    <style>#}
+{#        /* Custom styles for the modal position */#}
+{#        .modal {#}
+{#            position: fixed; /* Change to fixed to stay in view when scrolling */#}
+{#            top: 20px; /* Distance from the top */#}
+{#            left: 50%; /* Center horizontally */#}
+{#            transform: translateX(-50%); /* Adjust for centering */#}
+{#            z-index: 1050; /* Ensure it appears above other content */#}
+{#            display: none; /* Hide initially */#}
+{#        }#}
+{#    </style>#}
+{#</head>#}
+{#<body>#}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +29,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login & Signup</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <style>
+        /* Custom styles for the modal position */
+        .modal {
+            position: fixed; /* Fixed position to the viewport */
+            top: 20px; /* Distance from the top */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Adjust for centering */
+            z-index: 1050; /* Ensure it appears above other content */
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -29,26 +62,32 @@
                     <label for="password">Password</label>
                     <input type="password" name="password" id="password" required>
                 </div>
+
+                <!-- Forgot password link -->
+                <div class="forgot">
+                <a href="/forgot-password">Forgot your password?</a>
+                </div>
+
                 {% if error %}
                 <p class="error-message">{{ error }}</p>
                 {% endif %}
                 <button type="submit" class="sign">Sign in</button>
 
-            <div class="social-message">
-                <div class="line"></div>
-                <p class="message">Login with social accounts</p>
-                <div class="line"></div>
-            </div>
+                <div class="social-message">
+                    <div class="line"></div>
+                    <p class="message">Login with social accounts</p>
+                    <div class="line"></div>
+                </div>
 
-            <div class="social-icons">
-                <a href="/login/google" class="icon">
-                    <img src="/static/images/icons8-google.svg" alt="Google Icon">
-                </a>
-                <a href="/login/github" class="icon">
-                    <img src="/static/images/icons8-github.svg" alt="GitHub Icon">
-                </a>
-            </div>
-            <p class="quote">{{ quote }}</p>  <!-- Display random quote -->
+                <div class="social-icons">
+                    <a href="/login/google" class="icon">
+                        <img src="/static/images/icons8-google.svg" alt="Google Icon">
+                    </a>
+                    <a href="/login/github" class="icon">
+                        <img src="/static/images/icons8-github.svg" alt="GitHub Icon">
+                    </a>
+                </div>
+                <p class="quote">{{ quote }}</p>  <!-- Display random quote -->
             </form>
         </div>
     </div>
@@ -86,5 +125,50 @@
         </div>
     </div>
 </div>
+
+<!-- Signup Confirmation Modal -->
+<div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signupModalLabel">Signup Successful</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="signupMessage">
+                <!-- Message will be populated by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.querySelector('form[action="/signup"]').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(this); // Get form data
+
+        // Send the form data to the server
+        fetch('/signup', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json()) // Parse JSON response
+        .then(data => {
+            // Populate the modal with the message
+            document.getElementById('signupMessage').textContent = data.message;
+
+            // Show the modal
+            const signupModal = new bootstrap.Modal(document.getElementById('signupModal'));
+            signupModal.show();
+        })
+        .catch(error => {
+            console.error('Error during signup:', error); // Handle errors
+        });
+    });
+</script>
 </body>
 </html>

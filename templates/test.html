@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Signup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <!-- Circle Image Section -->
+    <div class="image-section">
+        <img src="{{ url_for('static', filename='images/doctor.png') }}" alt="Doctor Image">
+    </div>
+
+    <!-- Login Form Section -->
+    <div class="form-section">
+        <div class="form-container">
+            <p class="title">Login</p>
+            <form class="form" method="POST">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
+                {% if error %}
+                <p class="error-message">{{ error }}</p>
+                {% endif %}
+                <button type="submit" class="sign">Sign in</button>
+            </form>
+
+            <div class="social-message">
+                <div class="line"></div>
+                <p class="message">Login with social accounts</p>
+                <div class="line"></div>
+            </div>
+
+            <div class="social-icons">
+                <a href="/login/google" class="icon">
+                    <img src="/static/images/icons8-google.svg" alt="Google Icon">
+                </a>
+                <a href="/login/x" class="icon">
+                    <img src="/static/images/icons8-x.svg" alt="X Icon">
+                </a>
+                <a href="/login/github" class="icon">
+                    <img src="/static/images/icons8-github.svg" alt="GitHub Icon">
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Form Section -->
+    <div class="form-section">
+        <div class="form-container">
+            <p class="title">Sign Up</p>
+            <form class="form" method="POST" action="/signup">
+                <div class="input-group">
+                    <label for="signup-username">Username</label>
+                    <input type="text" name="signup-username" id="signup-username" required>
+                </div>
+                <div class="input-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" name="signup-email" id="signup-email" required>
+                </div>
+                <div class="input-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" name="signup-password" id="signup-password" required>
+                </div>
+                {% if signup_error %}
+                <p class="error-message">{{ signup_error }}</p>
+                {% endif %}
+                <button type="submit" class="sign">Sign up</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
