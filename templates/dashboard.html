@@ -1,0 +1,24 @@
+{#dashboard.html#}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Welcome, {{ user.full_name }}</h1>
+    <p>Your Patient ID is: {{ user.patient_id }}</p>
+    <p>Navigate through the options below:</p>
+
+    <div class="options">
+        <a href="/appointments">Manage Appointments</a>
+        <a href="/profile">View Profile</a>
+        <a href="/logout">Logout</a>
+    </div>
+</div>
+</body>
+</html>

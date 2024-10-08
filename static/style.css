@@ -94,7 +94,7 @@ body, html {
 /* Input Groups */
 .input-group label {
   font-size: 0.875rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.25rem;
   display: block;
   color: #D1D5DB;
 }

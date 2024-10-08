@@ -1,0 +1,95 @@
+{#appointment.html#}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.js"></script>
+    <style>
+        .container {
+            display: flex;
+        }
+        .left-panel {
+            width: 50%;
+            padding: 20px;
+        }
+        .right-panel {
+            width: 50%;
+            padding: 20px;
+        }
+        .appointment-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .appointment-item {
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Panel: Upcoming Appointments -->
+        <div class="left-panel">
+            <h3>Upcoming Appointments</h3>
+            <ul class="appointment-list">
+                {% for appointment in appointments %}
+                    <li class="appointment-item">
+                        <strong>{{ appointment['doctor'] }}</strong><br>
+                        Date: {{ appointment['date'] }}<br>
+                        Time: {{ appointment['time'] }}<br>
+                        Status: {{ appointment['status'] }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Right Panel: Appointment Booking -->
+        <div class="right-panel">
+            <h3>Book an Appointment</h3>
+            <form method="POST" action="/book_appointment">
+                <div class="form-group">
+                    <label for="doctor">Select Doctor:</label>
+                    <select name="doctor" id="doctor" required>
+                        {% for doctor in doctors %}
+                            <option value="{{ doctor['name'] }}">{{ doctor['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Select Date:</label>
+                    <input type="text" name="date" id="date" readonly required>
+                </div>
+
+                <div class="form-group">
+                    <label for="time">Select Time:</label>
+                    <input type="time" name="time" id="time" required>
+                </div>
+
+                <button type="submit">Book Appointment</button>
+            </form>
+
+            <div id="calendar"></div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#calendar').fullCalendar({
+                events: '/get_events', // Fetch events from the server
+                selectable: true,
+                select: function(startDate, endDate) {
+                    // Open appointment form with selected date
+                    $('#date').val(startDate.format('YYYY-MM-DD'));
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -79,14 +79,24 @@
                     <div class="line"></div>
                 </div>
 
+                <!-- Social login buttons -->
                 <div class="social-icons">
-                    <a href="/login/google" class="icon">
+                    <a href="{{ url_for('google_login') }}" class="icon">
                         <img src="/static/images/icons8-google.svg" alt="Google Icon">
                     </a>
-                    <a href="/login/github" class="icon">
+                    <a href="{{ url_for('github_login') }}" class="icon">
                         <img src="/static/images/icons8-github.svg" alt="GitHub Icon">
                     </a>
                 </div>
+
+{#                <div class="social-icons">#}
+{#                    <a href="/login/google" class="icon">#}
+{#                        <img src="/static/images/icons8-google.svg" alt="Google Icon">#}
+{#                    </a>#}
+{#                    <a href="/login/github" class="icon">#}
+{#                        <img src="/static/images/icons8-github.svg" alt="GitHub Icon">#}
+{#                    </a>#}
+{#                </div>#}
                 <p class="quote">{{ quote }}</p>  <!-- Display random quote -->
             </form>
         </div>
@@ -98,24 +108,28 @@
             <p class="title">Sign Up</p>
             <form class="form" method="POST" action="/signup">
                 <div class="input-group">
-                    <label for="full_name">Full Name</label>
+                    <label for="full_name">Full Name:</label>
                     <input type="text" name="full_name" id="full_name" required>
                 </div>
                 <div class="input-group">
-                    <label for="gender">Gender</label>
+                    <label for="gender">Gender:</label>
                     <input type="text" name="gender" id="gender" required>
                 </div>
                 <div class="input-group">
-                    <label for="age">Age</label>
+                    <label for="age">Age:</label>
                     <input type="number" name="age" id="age" required>
                 </div>
                 <div class="input-group">
-                    <label for="email">Email</label>
+                    <label for="email">Email:</label>
                     <input type="email" name="email" id="email" required>
                 </div>
                 <div class="input-group">
-                    <label for="mobile_no">Mobile No.</label>
-                    <input type="text" name="mobile_no" id="mobile_no" required>
+                    <label for="mobile_no">Mobile No:</label>
+                    <input type="text" name="mobile_number" id="mobile_no" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="password" required>
                 </div>
                 {% if signup_error %}
                 <p class="error-message">{{ signup_error }}</p>
