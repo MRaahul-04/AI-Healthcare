@@ -1,10 +1,11 @@
 # app.py
 
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 import random
 from datetime import datetime
 from flask_mail import Message, Mail
-from mongodb import db, save_user_to_database, get_user_by_patient_id_and_password
+from bson import ObjectId
+from mongodb import db, save_user_to_database, get_user_by_patient_id_and_password, get_user_data, get_appointments, get_prescriptions
 from flask_dance.contrib.github import make_github_blueprint, github
 from flask_dance.contrib.google import make_google_blueprint, google
 
@@ -93,27 +94,92 @@ def signup():
     })
 
 
+# @app.route('/login', methods=['POST'])
+# def login():
+#     patient_id = request.form.get('patient_id')
+#     password = request.form.get('password')
+#
+#     # Retrieve user from database
+#     user = get_user_by_patient_id_and_password(patient_id, password)
+#
+#     if user:
+#         return jsonify({'message': 'Login successful'})
+#     else:
+#         return jsonify({'message': 'Invalid credentials'}), 401
+
 @app.route('/login', methods=['POST'])
 def login():
-    patient_id = request.form.get('patient_id')
-    password = request.form.get('password')
+    # Get form data
+    patient_id = request.form['patient_id']
+    password = request.form['password']
 
-    # Retrieve user from database
+    # Example authentication logic
     user = get_user_by_patient_id_and_password(patient_id, password)
 
     if user:
-        return jsonify({'message': 'Login successful'})
+        # Convert ObjectId to string before saving to session
+        session['user_id'] = str(user['_id'])
+        session['patient_id'] = user['patient_id']
+        session['full_name'] = user['full_name']
+        return redirect(url_for('dashboard'))
     else:
-        return jsonify({'message': 'Invalid credentials'}), 401
+        flash('Invalid Patient ID or Password', 'error')
+        return render_template('index.html')
 
+# else:
+#     # If the method is GET, just render the login page
+#     return render_template('index.html')
+
+# @app.route('/dashboard', methods=['GET', 'POST'])
+# def dashboard():
+#     if 'user_id' in session:
+#         user_id = session['user_id']
+#         user = db.users.find_one({'_id': user_id})
+#
+#     else:
+#         # If user isn't logged in, redirect to log in
+#         return redirect(url_for('login'))  # Redirect to log in if no user is logged in
+
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))  # Ensure user is logged in
+
+    user_id = session['user_id']
+    user = db.users.find_one({'_id': ObjectId(user_id)})  # Fetch user by MongoDB ObjectId
+
+    if not user:
+        flash("User not found!", "error")
+        return redirect(url_for('login'))
+
+    patient_id = user.get('patient_id')
+    user_data = get_user_data(patient_id)  # Fetch user data
+    appointments = get_appointments(patient_id)  # Get appointments
+    prescriptions = get_prescriptions(patient_id)  # Get prescriptions
+
+    health_insight = "Stay hydrated and eat a balanced diet!"  # Example health insight
+
+    last_appointment = appointments[0] if appointments else {}
+    upcoming_appointments = appointments[1:] if len(appointments) > 1 else []
+
+    return render_template(
+        'dashboard.html',
+        user=user_data,
+        appointments=appointments,
+        last_appointment=last_appointment,
+        upcoming_appointments=upcoming_appointments,
+        health_insight=health_insight,
+        prescriptions=prescriptions,
+        medication_reminder="Take your medication as prescribed!"
+    )
 
 @app.route('/appointments', methods=['GET', 'POST'])
 def appointments():
     user_id = session.get('user_id')
 
     # Fetch upcoming appointments for the user
-    appointments = db.appointments.find({'user_id': user_id}).sort('date', 1)  # Sorting by date
-    appointments_list = list(appointments)  # Convert to a list
+    appointment = db.appointments.find({'user_id': user_id}).sort('date', 1)  # Sorting by date
+    appointments_list = list(appointment)  # Convert to a list
 
     # Fetch the list of doctors
     doctors = db.doctors.find()  # Fetch doctors from the database
@@ -132,60 +198,49 @@ def send_email(subject, recipient, body):
 
 @app.route('/book_appointment', methods=['POST'])
 def book_appointment():
-    user_id = session.get('user_id')
+    user_id = session['user_id']
     doctor_name = request.form['doctor']
     date = request.form['date']
     time = request.form['time']
 
-    # Fetch the user's email from the database
-    user = db.users.find_one({'_id': user_id})  # Assuming '_id' is the user ID field
-    if user:
-        user_email = user.get('email')  # Get the email field from the user document
-    else:
+    # Fetch user email for confirmation
+    user = db.users.find_one({'_id': ObjectId(user_id)})
+    if not user:
         return jsonify({'message': 'User not found.'}), 404
 
-    # Check for appointment conflicts (same doctor, date, and time)
-    existing_appointment = db.appointments.find_one({
-        'doctor': doctor_name,
-        'date': date,
-        'time': time
-    })
+    # Check for conflicts
+    conflict = db.appointments.find_one({'doctor': doctor_name, 'date': date, 'time': time})
+    if conflict:
+        return jsonify({'message': 'Time slot already booked.'}), 400
 
-    if existing_appointment:
-        return jsonify({'message': 'This time slot is already taken.'}), 400
-
-    # Insert appointment into MongoDB
-    appointment_data = {
-        'user_id': user_id,
+    # Book the appointment
+    db.appointments.insert_one({
+        'user_id': ObjectId(user_id),
         'doctor': doctor_name,
         'date': date,
         'time': time,
         'status': 'Pending'
-    }
+    })
 
-    db.appointments.insert_one(appointment_data)
-
-    # Send email notification
     send_email(
         "Appointment Confirmation",
-        user_email,  # Send the user's email
-        f"Your appointment with Dr. {doctor_name} on {date} at {time} has been confirmed."
+        user['email'],
+        f"Your appointment with Dr. {doctor_name} on {date} at {time} is confirmed."
     )
 
-    return redirect(url_for('appointments'))  # Redirect to appointments page
+    return redirect(url_for('appointments'))
 
 
 @app.route('/get_events', methods=['GET'])
+@app.route('/get_events', methods=['GET'])
 def get_events():
-    # Fetch events (appointments) from the database for calendar
-    events = db.appointments.find()
-    events_list = []
-    for event in events:
-        events_list.append({
-            'title': event['doctor'],
-            'start': event['date'] + 'T' + event['time'],  # Assuming date and time are stored in a suitable format
-            'end': event['date'] + 'T' + event['time'],
-        })
+    events = get_appointments(session['patient_id'])  # Fetch appointments for the logged-in patient
+    events_list = [{
+        'title': f"Appointment with Dr. {event['doctor']}",
+        'start': event['date'] + 'T' + event['time'],  # Assuming date and time are in a suitable format
+        'end': event['date'] + 'T' + event['time']
+    } for event in events]
+
     return jsonify(events_list)
 
 
@@ -200,22 +255,11 @@ def log_chat(user_id, message, response):
     db.chat_logs.insert_one(log_data)
 
 
-@app.route("/dashboard")
-def dashboard():
-    if 'user_id' in session:
-        user_id = session['user_id']
-        user = db.users.find_one({'_id': user_id})
-        return render_template("dashboard.html", user=user)
-    else:
-        # If user isn't logged in, redirect to log in
-        return redirect(url_for('login'))  # Redirect to log in if no user is logged in
-
-
 @app.route("/forgot-password", methods=["GET", "POST"])
 def forgot_password():
     if request.method == "POST":
         # Logic for sending password reset (via email or phone)
-        email_or_phone = request.form.get("email_or_phone")
+        request.form.get("email_or_phone")
         return redirect(url_for("password_reset_confirmation"))
     return render_template("forgot_password.html")
 
@@ -235,7 +279,7 @@ def google_login():
     google_info = google.get('/plus/v1/people/me')
     google_user_info = google_info.json()
     user_email = google_user_info.get("emails")[0].get("value")
-    user_name = google_user_info.get("displayName")
+    google_user_info.get("displayName")
 
     # Check if user already exists in the database
     user = db.users.find_one({'email': user_email})
@@ -260,7 +304,7 @@ def github_login():
     user_email = github_user_info.get("email")
 
     # Check if user already exists in the database
-    user = db.users.find_one({'email': user_email})
+    user = db.users.find_one({'email': user_email, 'login': user_name})
 
     if user:
         session['user_id'] = user['_id']  # Store the user's MongoDB ID in session

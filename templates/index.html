@@ -53,14 +53,15 @@
         <div class="form-container">
             <h2 class="welcome-text">Welcome to <br> HealthyAI</h2>
             <p class="title">Login</p>
-            <form class="form" method="POST">
+{#            <form class="form" method="POST">#}
+              <form action="{{ url_for('login') }}" method="POST">
                 <div class="input-group">
                     <label for="patient_id">Patient ID</label>
-                    <input type="text" name="patient_id" id="patient_id" required>
+                    <input type="text" id="patient_id" name="patient_id" required>
                 </div>
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" name="password" id="password" required>
+                    <input type="password" id="password" name="password" required>
                 </div>
 
                 <!-- Forgot password link -->
@@ -88,15 +89,6 @@
                         <img src="/static/images/icons8-github.svg" alt="GitHub Icon">
                     </a>
                 </div>
-
-{#                <div class="social-icons">#}
-{#                    <a href="/login/google" class="icon">#}
-{#                        <img src="/static/images/icons8-google.svg" alt="Google Icon">#}
-{#                    </a>#}
-{#                    <a href="/login/github" class="icon">#}
-{#                        <img src="/static/images/icons8-github.svg" alt="GitHub Icon">#}
-{#                    </a>#}
-{#                </div>#}
                 <p class="quote">{{ quote }}</p>  <!-- Display random quote -->
             </form>
         </div>
@@ -159,6 +151,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
     document.querySelector('form[action="/signup"]').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the default form submission
@@ -172,17 +165,25 @@
         })
         .then(response => response.json()) // Parse JSON response
         .then(data => {
-            // Populate the modal with the message
+            // Populate the modal with the signup confirmation message
             document.getElementById('signupMessage').textContent = data.message;
 
             // Show the modal
             const signupModal = new bootstrap.Modal(document.getElementById('signupModal'));
             signupModal.show();
+
+            // Automatically close the modal after 5 seconds (5000 milliseconds)
+            setTimeout(() => {
+                const modalElement = document.getElementById('signupModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
+            }, 5000);  // 5000 milliseconds = 5 seconds
         })
         .catch(error => {
             console.error('Error during signup:', error); // Handle errors
         });
-    });
+});
+
 </script>
 </body>
 </html>

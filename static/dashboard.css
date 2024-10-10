@@ -1,0 +1,88 @@
+/*dashboard.css*/
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #111827;
+    color: #F3F4F6;
+    padding: 2rem;
+}
+
+.greeting-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.profile-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.greeting-text h1 {
+    font-size: 1.5rem;
+}
+
+.greeting-text p {
+    font-size: 1rem;
+}
+
+.summary-card {
+    background-color: #2D3748;
+    padding: 1rem;
+    border-radius: 1rem;
+    width: 45%;
+}
+
+.summary-card h3 {
+    font-size: 1.25rem;
+    color: #3B82F6;
+}
+
+.appointment-list {
+    list-style: none;
+    padding: 0;
+}
+
+.appointment-item {
+    background-color: #2D3748;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 1rem;
+}
+
+.appointment-item button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    border: none;
+}
+
+.reschedule-btn {
+    background-color: #F59E0B;
+}
+
+.cancel-btn {
+    background-color: #EF4444;
+}
+
+.prescription-reminders {
+    margin-bottom: 2rem;
+}
+
+.prescription-reminders ul {
+    list-style: none;
+    padding: 0;
+}
+
+.prescription-reminders li {
+    background-color: #2D3748;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 1rem;
+}

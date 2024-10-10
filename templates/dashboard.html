@@ -5,20 +5,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Patient Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
 </head>
 <body>
-<div class="container">
-    <h1>Welcome, {{ user.full_name }}</h1>
-    <p>Your Patient ID is: {{ user.patient_id }}</p>
-    <p>Navigate through the options below:</p>
 
-    <div class="options">
-        <a href="/appointments">Manage Appointments</a>
-        <a href="/profile">View Profile</a>
-        <a href="/logout">Logout</a>
+    <!-- Greeting Section -->
+    <div class="greeting-section">
+        <img src="{{ user.profile_picture_url }}" alt="Profile Picture" class="5856.jpg">
+        <div class="greeting-text">
+            <h1>Welcome, {{ user.full_name }}!</h1>
+            <p>Patient ID: {{ user.patient_id }}</p>
+            <p>Age: {{ user.age }}</p>
+            <p>Last Activity: {{ user.last_activity }}</p>
+        </div>
     </div>
-</div>
+
+    <!-- Health Summary -->
+    <div class="health-summary">
+        <div class="summary-card">
+            <h3>Last Appointment</h3>
+            <p>Doctor: {{ last_appointment.doctor }}</p>
+            <p>Date: {{ last_appointment.date }}</p>
+        </div>
+        <div class="summary-card">
+            <h3>Upcoming Appointments</h3>
+            <ul>
+                {% for appointment in upcoming_appointments %}
+                    <li>{{ appointment.date }} with Dr. {{ appointment.doctor }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Upcoming Appointments -->
+    <div class="upcoming-appointments">
+        <h3>Upcoming Appointments</h3>
+        <ul class="appointment-list">
+            {% for appointment in appointments %}
+                <li class="appointment-item">
+                    <p><strong>{{ appointment.doctor }}</strong></p>
+                    <p>Date: {{ appointment.date }} | Time: {{ appointment.time }} | Status: {{ appointment.status }}</p>
+                    <button class="reschedule-btn">Reschedule</button>
+                    <button class="cancel-btn">Cancel</button>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Medical Records -->
+    <div class="medical-records">
+        <h3>Medical Records</h3>
+        <button onclick="window.location.href='/download_records'">Download Records</button>
+        <h4>Progress Chart</h4>
+        <canvas id="progress-chart"></canvas>
+        <h4>Symptom Tracker</h4>
+        <textarea id="symptoms" placeholder="Log your daily symptoms here..."></textarea>
+    </div>
+
+    <!-- Health Insights -->
+    <div class="health-insights">
+        <h3>Health Insights</h3>
+        <p>{{ health_insight }}</p>
+    </div>
+
+    <!-- Profile Management -->
+    <div class="profile-management">
+        <h3>Profile Settings</h3>
+        <form method="POST" action="/update_profile">
+            <input type="text" name="email" value="{{ user.email }}" placeholder="Email">
+            <input type="text" name="phone" value="{{ user.phone }}" placeholder="Phone">
+            <button type="submit">Update Profile</button>
+        </form>
+    </div>
+
+    <!-- Prescription Reminders -->
+    <div class="prescription-reminders">
+        <h3>Current Prescriptions</h3>
+        <ul>
+            {% for prescription in prescriptions %}
+                <li>{{ prescription.name }} - {{ prescription.dosage }} ({{ prescription.status }})</li>
+            {% endfor %}
+        </ul>
+        <h3>Medication Reminders</h3>
+        <p>{{ medication_reminder }}</p>
+    </div>
+
 </body>
 </html>
