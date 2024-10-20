@@ -1,88 +1,297 @@
 /*dashboard.css*/
 
-
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #111827;
-    color: #F3F4F6;
-    padding: 2rem;
+    margin: 0;
+    padding: 20px;
 }
 
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Greeting Section */
 .greeting-section {
+    grid-column: span 2;
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    justify-content: space-between;
 }
 
-.profile-img {
-    width: 80px;
-    height: 80px;
+.profile-image {
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    object-fit: cover;
-    margin-right: 15px;
+    margin-right: 20px;
 }
 
-.greeting-text h1 {
+.greeting-text {
+    flex-grow: 1;
+}
+
+.greeting-text h2 {
+    margin: 0;
     font-size: 1.5rem;
 }
 
 .greeting-text p {
-    font-size: 1rem;
+    margin: 5px 0;
 }
 
-.summary-card {
-    background-color: #2D3748;
-    padding: 1rem;
-    border-radius: 1rem;
-    width: 45%;
+/*!* Chatbot Button CSS *!*/
+/*.chatbot-button {*/
+/*    display: flex; !* Use flexbox for centering text *!*/
+/*    align-items: center; !* Center vertically *!*/
+/*    justify-content: center; !* Center horizontally *!*/
+/*    padding: 0; !* Remove padding to fit the circle *!*/
+/*    background-color: #1F2937; !* Button background color *!*/
+/*    color: white; !* Text color *!*/
+/*    text-decoration: none; !* Remove underline *!*/
+/*    width: 100px; !* Width of the circle *!*/
+/*    height: 100px; !* Height of the circle *!*/
+/*    border-radius: 50%; !* Make it circular *!*/
+/*    transition: background-color 0.3s; !* Smooth transition *!*/
+/*    font-size: 1rem; !* Adjust font size if necessary *!*/
+/*}*/
+
+
+/*.chatbot-button:hover {*/
+/*    background-color: #374151; !* Darker shade on hover *!*/
+/*}*/
+
+/* Chatbot Button CSS */
+.chatbot-button {
+    display: flex; /* Use flexbox for centering text */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    padding: 0; /* Remove padding to fit the circle */
+    background-color: #1F2937; /* Button background color */
+    color: white; /* Text color */
+    text-decoration: none; /* Remove underline */
+    width: 100px; /* Width of the circle */
+    height: 100px; /* Height of the circle */
+    border-radius: 50%; /* Make it circular */
+    transition: background-color 0.3s; /* Smooth transition */
+    font-size: 1rem; /* Adjust font size */
+    font-weight: bold; /* Make text bold */
+    animation: pulse 1.5s infinite; /* Add pulse animation */
+    position: relative; /* Needed for the sprinkler effect */
 }
 
-.summary-card h3 {
-    font-size: 1.25rem;
-    color: #3B82F6;
+/* Pulse Animation */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
-.appointment-list {
-    list-style: none;
+/* Sprinkler Effect */
+.chatbot-button::before,
+.chatbot-button::after {
+    content: '';
+    position: absolute;
+    background-color: #1F2937; /* Same color as the button */
+    border-radius: 50%;
+    opacity: 0;
+    animation: sprinkle 1.5s infinite; /* Animation for the sprinkler */
+}
+
+.chatbot-button::before {
+    width: 20px; /* Size of the sprinkler circle */
+    height: 20px;
+    top: -10px; /* Position above the button */
+    left: 70%; /* Center horizontally */
+    transform: translateX(-50%);
+}
+
+.chatbot-button::after {
+    width: 15px; /* Size of the sprinkler circle */
+    height: 15px;
+    bottom: -10px; /* Position below the button */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%);
+}
+
+
+/* Sprinkler Animation */
+@keyframes sprinkle {
+    0% {
+        opacity: 1; /* Start fully visible */
+        transform: scale(1); /* Start at original size */
+    }
+    50% {
+        opacity: 0; /* Fade out */
+        transform: scale(2); /* Grow larger */
+    }
+    100% {
+        opacity: 0; /* Stay invisible */
+        transform: scale(2); /* Stay larger */
+    }
+}
+
+/* Hover effect for the button */
+.chatbot-button:hover {
+    background-color: #374151; /* Darker shade on hover */
+}
+
+
+/* Health Overview Section */
+.health-overview {
+    background-color: #6182bb;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.health-overview h3 {
+    margin-top: 0;
+}
+
+/* Appointment List */
+.upcoming-appointments ul {
+    list-style-type: none;
     padding: 0;
 }
 
-.appointment-item {
-    background-color: #2D3748;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 1rem;
+.upcoming-appointments li {
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    border-radius: 4px;
 }
 
-.appointment-item button {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    border: none;
+/* Medical Records */
+.medical-records ul {
+    list-style-type: none;
+    padding: 0;
 }
 
-.reschedule-btn {
-    background-color: #F59E0B;
+.medical-records li {
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    border-radius: 4px;
 }
 
-.cancel-btn {
-    background-color: #EF4444;
+.medical-records table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
+.medical-records th, .medical-records td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+.medical-records th {
+    background-color: #f2f2f2;
+}
+
+/* Symptom Tracker */
+.symptom-tracker textarea {
+    width: 80%;
+    height: 50px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+/* Health Insights Section */
+.health-insights {
+    background-color: #168fba;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Profile Settings Section */
+.profile-settings {
+    background-color: #168fba;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-settings label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.profile-settings input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Prescription Reminders Section */
 .prescription-reminders {
-    margin-bottom: 2rem;
+    background-color: #6182bb;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .prescription-reminders ul {
-    list-style: none;
+    list-style-type: none;
     padding: 0;
 }
 
 .prescription-reminders li {
-    background-color: #2D3748;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 1rem;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.medication-reminder {
+    background-color: #9aadd1;
+    padding: 10px;
+    border: 2px solid #b0e0e6;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Button Styles */
+button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Gear Icon for Profile Settings */
+.gear-icon {
+    margin-left: 5px;
+    font-size: 1rem; /* Adjust size */
 }

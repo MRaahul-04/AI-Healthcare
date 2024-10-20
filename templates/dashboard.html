@@ -9,87 +9,147 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
 </head>
 <body>
-
-    <!-- Greeting Section -->
-    <div class="greeting-section">
-        <img src="{{ user.profile_picture_url }}" alt="Profile Picture" class="5856.jpg">
-        <div class="greeting-text">
-            <h1>Welcome, {{ user.full_name }}!</h1>
-            <p>Patient ID: {{ user.patient_id }}</p>
-            <p>Age: {{ user.age }}</p>
-            <p>Last Activity: {{ user.last_activity }}</p>
+    <div class="container">
+        <!-- Greeting Section -->
+        <div class="greeting-section">
+            <img src="{{ url_for('static', filename='images/pexels-blitzboy-1040880.jpg') }}" alt="Profile Image" class="profile-image">
+            <div class="greeting-text">
+                <h2>Welcome, {{ user.full_name }}!</h2>
+                <p>Patient ID: {{ user.patient_id }}</p>
+                <p>Age: {{ user.age }}</p>
+                <p>Last Login: {{ last_login_time }}</p>
+            </div>
+            <a href="/chatbot" class="chatbot-button">Chat with AI</a> <!-- Button for Chatbot -->
+            <div class="sprinkler top"></div>
+            <div class="sprinkler bottom"></div>
+            <div class="sprinkler left"></div>
         </div>
-    </div>
 
-    <!-- Health Summary -->
-    <div class="health-summary">
-        <div class="summary-card">
-            <h3>Last Appointment</h3>
-            <p>Doctor: {{ last_appointment.doctor }}</p>
-            <p>Date: {{ last_appointment.date }}</p>
+        <!-- Health Overview Section -->
+        <div class="health-overview">
+            <h3>Health Overview</h3>
+
+            <!-- Upcoming Appointments -->
+            <div class="upcoming-appointments">
+                <h4>Upcoming Appointments</h4>
+                <ul>
+                    {% for appointment in upcoming_appointments %}
+                        <li>
+                            {{ appointment.date }} - {{ appointment.doctor }}
+                            <button onclick="rescheduleAppointment('{{ appointment.id }}')">Reschedule</button>
+                            <button onclick="cancelAppointment('{{ appointment.id }}')">Cancel</button>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Last Appointment Details -->
+            <div class="last-appointment">
+                <h4>Last Appointment</h4>
+                <p>Date: {{ last_appointment.date }}</p>
+                <p>Doctor: {{ last_appointment.doctor }}</p>
+                <p>Status: {{ last_appointment.status }}</p>
+            </div>
+
+            <!-- Symptom Tracker -->
+            <div class="symptom-tracker">
+                <h4>Symptom Tracker</h4>
+                <label for="symptom_log"></label><textarea id="symptom_log" placeholder="Log your symptoms here..."></textarea>
+                <button onclick="saveSymptomLog()">Save Symptoms</button>
+            </div>
         </div>
-        <div class="summary-card">
-            <h3>Upcoming Appointments</h3>
+
+        <!-- Health Insights Section -->
+        <div class="health-insights">
+            <h3>Health Insights</h3>
+            <p>Stay hydrated and eat a balanced diet!</p>
+
+            <!-- Medical Records -->
+            <div class="medical-records">
+                <h4>Medical Records</h4>
+                <form method="POST" action="/upload_record" enctype="multipart/form-data">
+                    <input type="file" name="record_file" required>
+                    <button type="submit">Upload Record</button>
+                </form>
+
+                <!-- Table for last 5 uploaded records -->
+                {% if medical_records %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Record Name</th>
+                                <th>Uploaded On</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in medical_records|slice(0, 5) %}
+                                <tr>
+                                    <td>{{ record.filename }}</td>
+                                    <td>{{ record.upload_date }}</td>  <!-- Assuming you have this field in your record -->
+                                    <td>
+                                        <a href="/download_record/{{ record.id }}">Download</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No medical records uploaded yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Profile Settings Section -->
+        <div class="profile-settings">
+            <h3>Profile Settings <i class="gear-icon"></i></h3>
+            <form method="POST" action="/update_profile">
+                <label for="email">Email:</label>
+                <label>
+                    <input type="email" name="email" value="{{ user.email }}" required>
+                </label>
+
+                <label for="mobile">Mobile Number:</label>
+                <label>
+                    <input type="text" name="mobile" value="{{ user.mobile_number }}" required>
+                </label>
+
+                <label for="age">Age:</label>
+                <label>
+                    <input type="number" name="age" value="{{ user.age }}" required>
+                </label>
+
+                <button type="submit">Update</button>
+            </form>
+        </div>
+
+        <!-- Prescription Reminders Section -->
+        <div class="prescription-reminders">
+            <h3>Prescription Reminders</h3>
             <ul>
-                {% for appointment in upcoming_appointments %}
-                    <li>{{ appointment.date }} with Dr. {{ appointment.doctor }}</li>
+                {% for prescription in prescriptions %}
+                    <li>{{ prescription.name }} - {{ prescription.updated_date }}</li>
                 {% endfor %}
             </ul>
+                <div class="medication-reminder">
+                    <p>Take your medication as prescribed!</p>
+                </div>
         </div>
     </div>
 
-    <!-- Upcoming Appointments -->
-    <div class="upcoming-appointments">
-        <h3>Upcoming Appointments</h3>
-        <ul class="appointment-list">
-            {% for appointment in appointments %}
-                <li class="appointment-item">
-                    <p><strong>{{ appointment.doctor }}</strong></p>
-                    <p>Date: {{ appointment.date }} | Time: {{ appointment.time }} | Status: {{ appointment.status }}</p>
-                    <button class="reschedule-btn">Reschedule</button>
-                    <button class="cancel-btn">Cancel</button>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
+    <script>
+        // JavaScript functions for handling appointment actions, symptom logging, etc.
+        function rescheduleAppointment(id) {
+            // Logic for rescheduling
+        }
 
-    <!-- Medical Records -->
-    <div class="medical-records">
-        <h3>Medical Records</h3>
-        <button onclick="window.location.href='/download_records'">Download Records</button>
-        <h4>Progress Chart</h4>
-        <canvas id="progress-chart"></canvas>
-        <h4>Symptom Tracker</h4>
-        <textarea id="symptoms" placeholder="Log your daily symptoms here..."></textarea>
-    </div>
+        function cancelAppointment(id) {
+            // Logic for cancelling
+        }
 
-    <!-- Health Insights -->
-    <div class="health-insights">
-        <h3>Health Insights</h3>
-        <p>{{ health_insight }}</p>
-    </div>
-
-    <!-- Profile Management -->
-    <div class="profile-management">
-        <h3>Profile Settings</h3>
-        <form method="POST" action="/update_profile">
-            <input type="text" name="email" value="{{ user.email }}" placeholder="Email">
-            <input type="text" name="phone" value="{{ user.phone }}" placeholder="Phone">
-            <button type="submit">Update Profile</button>
-        </form>
-    </div>
-
-    <!-- Prescription Reminders -->
-    <div class="prescription-reminders">
-        <h3>Current Prescriptions</h3>
-        <ul>
-            {% for prescription in prescriptions %}
-                <li>{{ prescription.name }} - {{ prescription.dosage }} ({{ prescription.status }})</li>
-            {% endfor %}
-        </ul>
-        <h3>Medication Reminders</h3>
-        <p>{{ medication_reminder }}</p>
-    </div>
-
+        function saveSymptomLog() {
+            // Logic for saving symptom logs
+        }
+    </script>
 </body>
 </html>

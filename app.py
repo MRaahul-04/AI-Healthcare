@@ -5,7 +5,8 @@ import random
 from datetime import datetime
 from flask_mail import Message, Mail
 from bson import ObjectId
-from mongodb import db, save_user_to_database, get_user_by_patient_id_and_password, get_user_data, get_appointments, get_prescriptions
+from mongodb import db, save_user_to_database, get_user_by_patient_id_and_password, get_user_data, get_appointments, \
+    get_prescriptions, get_medical_records
 from flask_dance.contrib.github import make_github_blueprint, github
 from flask_dance.contrib.google import make_google_blueprint, google
 
@@ -93,20 +94,6 @@ def signup():
         'message': f'Patient ID: {patient_id} created. Please sign in to proceed.'
     })
 
-
-# @app.route('/login', methods=['POST'])
-# def login():
-#     patient_id = request.form.get('patient_id')
-#     password = request.form.get('password')
-#
-#     # Retrieve user from database
-#     user = get_user_by_patient_id_and_password(patient_id, password)
-#
-#     if user:
-#         return jsonify({'message': 'Login successful'})
-#     else:
-#         return jsonify({'message': 'Invalid credentials'}), 401
-
 @app.route('/login', methods=['POST'])
 def login():
     # Get form data
@@ -154,6 +141,7 @@ def dashboard():
 
     patient_id = user.get('patient_id')
     user_data = get_user_data(patient_id)  # Fetch user data
+    medical_records = get_medical_records(patient_id)
     appointments = get_appointments(patient_id)  # Get appointments
     prescriptions = get_prescriptions(patient_id)  # Get prescriptions
 
@@ -169,9 +157,14 @@ def dashboard():
         last_appointment=last_appointment,
         upcoming_appointments=upcoming_appointments,
         health_insight=health_insight,
+        medical_records=medical_records,
         prescriptions=prescriptions,
         medication_reminder="Take your medication as prescribed!"
     )
+
+@app.route('/chatbot')
+def chatbot():
+    return render_template('chatbot.html')  # Render your chatbot page
 
 @app.route('/appointments', methods=['GET', 'POST'])
 def appointments():
