@@ -304,7 +304,7 @@ def github_login():
         return redirect(url_for('dashboard'))  # Redirect to the dashboard
     else:
         # If user doesn't exist, redirect to the signup page
-        return redirect(url_for('signup'))  # Redirect to signup page
+        return redirect(url_for('signup'))  # Redirect to signup page..
 
 
 if __name__ == "__main__":
